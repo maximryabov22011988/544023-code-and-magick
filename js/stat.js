@@ -1,16 +1,25 @@
 'use strict';
 
-var CLOUD_WIDTH = 420;
-var CLOUD_HEIGHT = 270;
 var CLOUD_X = 100;
 var CLOUD_Y = 10;
+var CLOUD_WIDTH = 420;
+var CLOUD_HEIGHT = 270;
 var SHADOW_CLOUD_OFFSET = 10;
-var GAP = 20;
+
+var FONT_SIZE = '16px';
+var FONT_FAMILY = 'PT Mono';
 var FONT_HEIGHT = 10;
 var FONT_GAP = 10;
+
 var BAR_WIDTH = 40;
-var barHeight = 150;
+var BAR_HEIGHT = 150;
 var BAR_GAP = 50;
+
+var getRandomNumber = function (min, max) {
+  var number = min - 0.5 + Math.random() * (max - min + 1);
+  number = Math.round(number);
+  return number;
+};
 
 var getMaxElement = function (arr) {
   var maxElement = arr[0];
@@ -36,20 +45,28 @@ window.renderStatistics = function (ctx, names, times) {
   ctx.fillRect(CLOUD_X, CLOUD_Y, CLOUD_WIDTH, CLOUD_HEIGHT);
   ctx.restore();
 
-  ctx.font = '16px PT Mono';
-  ctx.fillText('Ура вы победили!', CLOUD_X + GAP, GAP * 2);
-  ctx.fillText('Список результатов:', CLOUD_X + GAP, GAP * 3);
+  ctx.font = FONT_SIZE + ' ' + FONT_FAMILY;
+  ctx.fillText('Ура вы победили!', CLOUD_X + FONT_GAP * 2, FONT_GAP * 4);
+  ctx.fillText('Список результатов:', CLOUD_X + FONT_GAP * 2, FONT_GAP * 6);
 
   var maxTime = getMaxElement(times);
 
   for (var i = 0; i < names.length; i++) {
+    var xPoint = CLOUD_X + FONT_GAP * 4 + (BAR_WIDTH + BAR_GAP) * i;
+    var yPoint = CLOUD_HEIGHT - FONT_HEIGHT - FONT_GAP * 2;
+    var barHeight = (BAR_HEIGHT * times[i]) / maxTime;
+
     ctx.save();
-    ctx.fillText(names[i], CLOUD_X + GAP * 2 + (BAR_WIDTH + BAR_GAP) * i, CLOUD_HEIGHT - GAP / 2);
+    ctx.fillText(names[i], xPoint, CLOUD_HEIGHT - FONT_GAP);
+    ctx.fillText(Math.round(times[i]), xPoint, yPoint - barHeight - FONT_GAP);
 
-    ctx.fillStyle = (names[i] === 'Вы') ? ('rgba(255, 0, 0, 1)') : ('hsl(235, ' + Math.round(Math.random() * 100) + '%, ' + Math.round(Math.random() * 80 + 20) + '%)');
-    ctx.fillRect(CLOUD_X + GAP * 2 + (BAR_WIDTH + BAR_GAP) * i, CLOUD_HEIGHT - GAP / 2 - FONT_HEIGHT - FONT_GAP, BAR_WIDTH, -(barHeight * times[i]) / maxTime);
+    ctx.fillStyle = 'hsla(241, ' + getRandomNumber(0, 100) + '%, 30%, 1)';
+
+    if (names[i] === 'Вы') {
+      ctx.fillStyle = 'rgba(255, 0, 0, 1)';
+    }
+
+    ctx.fillRect(xPoint, yPoint, BAR_WIDTH, -barHeight);
     ctx.restore();
-
-    ctx.fillText(Math.round(times[i]), CLOUD_X + GAP * 2 + (BAR_WIDTH + BAR_GAP) * i, CLOUD_HEIGHT - GAP / 2  - FONT_HEIGHT - FONT_GAP - (barHeight * times[i]) / maxTime - GAP / 2);
   }
 };
