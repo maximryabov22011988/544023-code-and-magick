@@ -1,52 +1,58 @@
 'use strict';
 
-var names = ['Иван', 'Хуан Себастьян', 'Мария', 'Кристоф', 'Виктор', 'Юлия', 'Люпита', 'Вашингтон'];
-var lastNames = ['да Марья', 'Верон', 'Мирабелла', 'Вальц', 'Онопко', 'Топольницкая', 'Нионго', 'Ирвинг'];
-var coatColors = ['rgb(101, 137, 164)', 'rgb(241, 43, 107)', 'rgb(146, 100, 161)', 'rgb(56, 159, 117)', 'rgb(215, 210, 55)', 'rgb(0, 0, 0)'];
-var eyesColors = ['black', 'red', 'blue', 'yellow', 'green'];
+var NUMBER_OF_OBJECTS = 4;
 
+var NAMES = ['Иван', 'Хуан Себастьян', 'Мария', 'Кристоф', 'Виктор', 'Юлия', 'Люпита', 'Вашингтон'];
+var SURNAMES = ['да Марья', 'Верон', 'Мирабелла', 'Вальц', 'Онопко', 'Топольницкая', 'Нионго', 'Ирвинг'];
+var COAT_COLORS = ['rgb(101, 137, 164)', 'rgb(241, 43, 107)', 'rgb(146, 100, 161)', 'rgb(56, 159, 117)', 'rgb(215, 210, 55)', 'rgb(0, 0, 0)'];
+var EYES_COLORS = ['black', 'red', 'blue', 'yellow', 'green'];
 
+var userDialog = document.querySelector('.setup');
+
+var similarListElement = document.querySelector('.setup-similar-list');
+var similarWizardTemplate = document.querySelector('#similar-wizard-template')
+  .content
+  .querySelector('.setup-similar-item');
+
+userDialog.classList.remove('hidden');
+userDialog.querySelector('.setup-similar').classList.remove('hidden');
+
+/**
+ * Генерирует случайное число в диапазоне от min до max (включительно)
+ * @param  {number} min - минимальное число
+ * @param  {number} max - максимальное число
+ * @return {number}     - случайное число
+ */
 var generateRandomNumber = function (min, max) {
   return Math.floor(Math.random() * (max + 1 - min)) + min;
 };
 
-var generateIndex = function (arr) {
-  var minIndex = 0;
-  var maxIndex = arr.length - 1;
-  var index = generateRandomNumber(minIndex, maxIndex);
-
-  return index;
-};
-
-var generateArrayElement = function (array) {
-  var index = generateIndex(array);
-  return array[index];
-};
-
-
-var generateWizards = function (namesArray, lastNamesArray, coatColorArray, eyesColorArray, wizardsCount) {
+/**
+ * Генерирует массив волшебников
+ * @param  {number} count - необходимое количество волшебников
+ * @return {array}        - массив объектов (волшебников)
+ */
+var generateWizards = function (count) {
   var wizards = [];
 
-  for (var i = 0; i < wizardsCount; i++) {
-    wizards[i] = {
-      name: generateArrayElement(namesArray) + ' ' + generateArrayElement(lastNamesArray),
-      coatColor: generateArrayElement(coatColorArray),
-      eyesColor: generateArrayElement(eyesColorArray)
+  for (var i = 0; i < count; i++) {
+    var wizardSample = {
+      name: NAMES[generateRandomNumber(0, NAMES.length - 1)] + ' ' + SURNAMES[generateRandomNumber(0, SURNAMES.length - 1)],
+      coatColor: COAT_COLORS[generateRandomNumber(0, COAT_COLORS.length - 1)],
+      eyesColor: EYES_COLORS[generateRandomNumber(0, EYES_COLORS.length - 1)]
     };
+
+    wizards.push(wizardSample);
   }
 
   return wizards;
 };
 
-var wizards = generateWizards(names, lastNames, coatColors, eyesColors, 4);
-
-var userDialog = document.querySelector('.setup');
-userDialog.classList.remove('hidden');
-
-var similarListElement = document.querySelector('.setup-similar-list');
-var similarWizardTemplate = document.querySelector('#similar-wizard-template').content.querySelector('.setup-similar-item');
-var fragment = document.createDocumentFragment();
-
+/**
+ * Отрисовывает волшебника
+ * @param  {object} wizard - объект с описанием волшебника
+ * @return {DOM}           - DOM-элемент с измененными данными
+ */
 var renderWizard = function (wizard) {
   var wizardElement = similarWizardTemplate.cloneNode(true);
 
@@ -57,10 +63,19 @@ var renderWizard = function (wizard) {
   return wizardElement;
 };
 
-for (var i = 0; i < wizards.length; i++) {
-  fragment.appendChild(renderWizard(wizards[i]));
-}
+/**
+ * Вставляет DOM-элемент в нужное место в DOM
+ * @param  {DOM} parentElement - контейнер, для вставки сгенерированных DOM-элементов
+ */
+var insertElements = function (parentElement) {
+  var fragment = document.createDocumentFragment();
+  var wizards = generateWizards(NUMBER_OF_OBJECTS);
 
-similarListElement.appendChild(fragment);
+  wizards.forEach(function (wizard) {
+    fragment.appendChild(renderWizard(wizard));
+  });
 
-userDialog.querySelector('.setup-similar').classList.remove('hidden');
+  parentElement.appendChild(fragment);
+};
+
+insertElements(similarListElement);
