@@ -1,9 +1,9 @@
 'use strict';
 
-var NUMBER_OF_OBJECTS = 4;
-
 var ENTER_KEYCODE = 13;
 var ESC_KEYCODE = 27;
+
+var NUMBER_OF_OBJECTS = 4;
 
 var NAMES = [
   'Иван',
@@ -49,22 +49,22 @@ var FIREBALL_COLORS = [
 ];
 
 var userDialog = document.querySelector('.setup');
+var userDialogForm = userDialog.querySelector('.setup-wizard-form');
 
-var coatWizard = userDialog.querySelector('.setup-wizard .wizard-coat');
-var eyesWizard = userDialog.querySelector('.setup-wizard .wizard-eyes');
-var fireball = userDialog.querySelector('.setup-fireball-wrap');
+var customWizard = userDialog.querySelector('.setup-player');
+var coatColorInput = userDialog.querySelector('input[name="coat-color"]');
+var eyesColorInput = userDialog.querySelector('input[name="eyes-color"]');
+var fireballColorInput = userDialog.querySelector('input[name="fireball-color"]');
 
 var similarListElement = document.querySelector('.setup-similar-list');
 var similarWizardTemplate = document.querySelector('#similar-wizard-template')
   .content
   .querySelector('.setup-similar-item');
 
+var userDialogOpenButton = document.querySelector('.setup-open');
+var userAvatar = userDialogOpenButton.querySelector('.setup-open-icon');
+var userDialogCloseButton = userDialog.querySelector('.setup-close');
 userDialog.querySelector('.setup-similar').classList.remove('hidden');
-
-var userDialogOpen = document.querySelector('.setup-open');
-var userDialogClose = userDialog.querySelector('.setup-close');
-var userAvatar = userDialogOpen.querySelector('.setup-open-icon');
-var userSettingsSave = userDialog.querySelector('.setup-submit');
 
 /**
  * Генерирует случайное число в диапазоне от min до max (включительно)
@@ -127,16 +127,6 @@ var insertElements = function (parentElement) {
   parentElement.appendChild(fragment);
 };
 
-insertElements(similarListElement);
-
-/**
- * Отправляет данные на сервер
- * @param  {object} evt - объект event
- */
-var sendSettingsToServer = function (evt) {
-  evt.submit();
-};
-
 /**
  * Закрывает попап при нажатии ESC
  * @param  {object} evt - объект event
@@ -148,64 +138,57 @@ var popupEscPressHandler = function (evt) {
 };
 
 /**
- * Формирует цвет плаща волшебника и записывает значение в соответствующий input (скрытый)
+ * Изменяет цвет
+ * @param  {object} evt - объект event
  */
-var setCoatColor = function () {
-  var newColor = COAT_COLORS[generateRandomNumber(0, COAT_COLORS.length - 1)];
-  userDialog.querySelector('input[name="coat-color"]').value = newColor;
-  coatWizard.style.fill = newColor;
-};
+var changeColor = function (evt) {
+  var targetClass = evt.target.classList;
+  var targetStyle = evt.target.style;
+  var newColor;
 
-/**
- * Формирует цвет глаз волшебника и записывает значение в соответствующий input (скрытый)
- */
-var setEyesColor = function () {
-  var newColor = EYES_COLORS[generateRandomNumber(0, EYES_COLORS.length - 1)];
-  userDialog.querySelector('input[name="eyes-color"]').value = newColor;
-  eyesWizard.style.fill = newColor;
-};
-
-/**
- * Формирует цвет фаейрболла и записывает значение в соответствующий input (скрытый)
- */
-var setFireballColor = function () {
-  var newColor = FIREBALL_COLORS[generateRandomNumber(0, FIREBALL_COLORS.length - 1)];
-  userDialog.querySelector('input[name="fireball-color"]').value = newColor;
-  fireball.style.background = newColor;
+  if (targetClass.contains('wizard-coat')) {
+    newColor = COAT_COLORS[generateRandomNumber(0, COAT_COLORS.length - 1)];
+    targetStyle.fill = newColor;
+    coatColorInput.value = newColor;
+  } else if (targetClass.contains('wizard-eyes')) {
+    newColor = EYES_COLORS[generateRandomNumber(0, EYES_COLORS.length - 1)];
+    targetStyle.fill = newColor;
+    eyesColorInput.value = newColor;
+  } else if (targetClass.contains('setup-fireball')) {
+    newColor = FIREBALL_COLORS[generateRandomNumber(0, FIREBALL_COLORS.length - 1)];
+    fireballColorInput.value = newColor;
+    targetStyle.backgroundColor = newColor;
+  }
 };
 
 /**
  * Открывает попап
  */
 var openPopup = function () {
+  insertElements(similarListElement);
   userDialog.classList.remove('hidden');
   document.addEventListener('keydown', popupEscPressHandler);
-
-  coatWizard.addEventListener('click', setCoatColor);
-  eyesWizard.addEventListener('click', setEyesColor);
-  fireball.addEventListener('click', setFireballColor);
-
-  userSettingsSave.addEventListener('click', sendSettingsToServer);
+  customWizard.addEventListener('click', changeColor);
 };
 
 /**
  * Закрывает попап
  */
 var closePopup = function () {
+  similarListElement.innerHTML = '';
   userDialog.classList.add('hidden');
   document.removeEventListener('keydown', popupEscPressHandler);
-
-  coatWizard.removeEventListener('click', setCoatColor);
-  eyesWizard.removeEventListener('click', setEyesColor);
-  fireball.removeEventListener('click', setFireballColor);
-
-  userSettingsSave.removeEventListener('click', sendSettingsToServer);
+  customWizard.removeEventListener('click', changeColor);
 };
 
 /**
- * Обработчики событий на открытие попапа
+ * Обработчики событий
  */
-userDialogOpen.addEventListener('click', function () {
+
+/**
+ * Открытие попапа
+ */
+userDialogOpenButton.addEventListener('click', function () {
   openPopup();
 });
 
@@ -216,15 +199,23 @@ userAvatar.addEventListener('keydown', function (evt) {
 });
 
 /**
- * Обработчики событий на закрытие попапа
+ * Закрытие попапа
  */
-userDialogClose.addEventListener('click', function () {
+userDialogCloseButton.addEventListener('click', function () {
   closePopup();
 });
 
-userDialogClose.addEventListener('keydown', function (evt) {
+userDialogCloseButton.addEventListener('keydown', function (evt) {
   if (evt.which === ENTER_KEYCODE) {
     closePopup();
   }
 });
 
+/**
+ * Отменяет отправку формы по умолчанию
+ * @param  {object} evt - объект event
+ */
+userDialogForm.addEventListener('submit', function (evt) {
+  evt.preventDefault();
+  closePopup();
+});
