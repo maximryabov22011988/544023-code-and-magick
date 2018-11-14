@@ -16,6 +16,7 @@
 
     var moveDialogElement = function (moveEvt) {
       moveEvt.preventDefault();
+
       isDragged = true;
 
       var shift = {
