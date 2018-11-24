@@ -1019,3 +1019,20 @@ input[type=radio]:checked + .review-mark-label
 
     opacity: 0;
 }
+
+.error-message {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  margin: 0 auto;
+  font-size: 30px;
+  text-align: center;
+  background-color: red;
+}
+
+.setup-similar-loader {
+  margin: 0;
+  margin-left: 20px;
+  color: #fff;
+}

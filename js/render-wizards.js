@@ -1,45 +1,42 @@
 'use strict';
 
 (function () {
-  var WIZARD = window.util.wizard;
-  var generateData = window.util.generateData;
+  var backend = window.backend;
 
+  var similarListElement = document.querySelector('.setup-similar-list');
+  var loaderElement = document.querySelector('.setup-similar-loader');
   var similarWizardTemplate = document.querySelector('#similar-wizard-template')
     .content
     .querySelector('.setup-similar-item');
-
-  var generateWizardsData = function (count) {
-    var wizardsData = [];
-
-    for (var i = 0; i < count; i++) {
-      wizardsData[i] = {
-        name: generateData(WIZARD['NAMES']) + generateData(WIZARD['SURNAMES']),
-        coatColor: generateData(WIZARD['COAT_COLORS']),
-        eyesColor: generateData(WIZARD['EYES_COLORS'])
-      };
-    }
-
-    return wizardsData;
-  };
 
   var renderWizard = function (wizard) {
     var wizardElement = similarWizardTemplate.cloneNode(true);
 
     wizardElement.querySelector('.setup-similar-label').textContent = wizard.name;
-    wizardElement.querySelector('.wizard-coat').style.fill = wizard.coatColor;
-    wizardElement.querySelector('.wizard-eyes').style.fill = wizard.eyesColor;
+    wizardElement.querySelector('.wizard-coat').style.fill = wizard.colorCoat;
+    wizardElement.querySelector('.wizard-eyes').style.fill = wizard.colorEyes;
 
     return wizardElement;
   };
 
-  window.renderWizards = function (parentElement) {
+  var successHandler = function (wizards) {
     var fragment = document.createDocumentFragment();
-    var wizards = generateWizardsData(WIZARD['NUMBER']);
 
-    wizards.forEach(function (wizard) {
-      fragment.appendChild(renderWizard(wizard));
-    });
+    for (var i = 0; i < 4; i++) {
+      fragment.appendChild(renderWizard(wizards[i]));
+    }
 
-    parentElement.appendChild(fragment);
+    similarListElement.appendChild(fragment);
+  };
+
+  var errorHandler = function (errorMessage) {
+    var node = document.createElement('div');
+    node.classList.add('error-message');
+    node.textContent = errorMessage;
+    document.body.insertAdjacentElement('afterbegin', node);
+  };
+
+  window.renderWizards = function () {
+    backend.load(successHandler, errorHandler, loaderElement);
   };
 })();

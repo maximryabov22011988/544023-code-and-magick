@@ -1,41 +1,37 @@
 'use strict';
 
 (function () {
-  var WIZARD = window.util.wizard;
-  var changeColorElement = window.util.changeColor;
+  var backend = window.backend;
+  var isEnterEvent = window.util.isEnterEvent;
+  var isEscEvent = window.util.isEscEvent;
+  var renderWizards = window.renderWizards;
+  var changeColorWizard = window.changeColorWizard;
 
+  var form = document.querySelector('.setup-wizard-form');
   var userDialog = document.querySelector('.setup');
   var userDialogSimilar = document.querySelector('.setup-similar');
   var userAvatar = document.querySelector('.setup-open-icon');
   var userDialogOpenButton = document.querySelector('.setup-open');
   var userDialogCloseButton = userDialog.querySelector('.setup-close');
-
   var similarListElement = document.querySelector('.setup-similar-list');
-
   var customWizard = userDialog.querySelector('.setup-player');
-  var coatColorInput = userDialog.querySelector('input[name="coat-color"]');
-  var eyesColorInput = userDialog.querySelector('input[name="eyes-color"]');
-  var fireballColorInput = userDialog.querySelector('input[name="fireball-color"]');
 
-  var changeColorWizard = function (evt) {
-    var target = evt.target;
-    var targetClass = target.classList;
+  var successHandler = function (response, evt) {
+    userDialog.classList.add('hidden');
+    evt.preventDefault();
+  };
 
-    if (targetClass.contains('wizard-coat')) {
-      changeColorElement(target, WIZARD['COAT_COLORS'], coatColorInput);
-    } else if (targetClass.contains('wizard-eyes')) {
-      changeColorElement(target, WIZARD['EYES_COLORS'], eyesColorInput);
-    } else if (targetClass.contains('setup-fireball')) {
-      changeColorElement(target, WIZARD['FIREBALL_COLORS'], fireballColorInput);
-    }
+  var errorHandler = function (errorMessage) {
+    throw new Error(errorMessage);
   };
 
   var popupEscPressHandler = function (evt) {
-    window.util.isEscEvent(evt, closePopup);
+    isEscEvent(evt, closePopup);
   };
 
   var openPopup = function () {
-    window.renderWizards(similarListElement);
+    similarListElement.innerHTML = '';
+    renderWizards();
     userDialog.classList.remove('hidden');
     userDialogSimilar.classList.remove('hidden');
     customWizard.addEventListener('click', changeColorWizard);
@@ -55,7 +51,7 @@
   });
 
   userAvatar.addEventListener('keydown', function (evt) {
-    window.util.isEnterEvent(evt, openPopup);
+    isEnterEvent(evt, openPopup);
   });
 
   userDialogCloseButton.addEventListener('click', function () {
@@ -63,7 +59,11 @@
   });
 
   userDialogCloseButton.addEventListener('keydown', function (evt) {
-    window.util.isEnterEvent(evt, closePopup);
+    isEnterEvent(evt, closePopup);
+  });
+
+  form.addEventListener('submit', function (evt) {
+    backend.save(new FormData(form), successHandler, errorHandler);
   });
 })();
 
