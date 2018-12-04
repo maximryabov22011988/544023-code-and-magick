@@ -1,10 +1,7 @@
 'use strict';
 
 (function () {
-  var backend = window.backend;
-
   var similarListElement = document.querySelector('.setup-similar-list');
-  var loaderElement = document.querySelector('.setup-similar-loader');
   var similarWizardTemplate = document.querySelector('#similar-wizard-template')
     .content
     .querySelector('.setup-similar-item');
@@ -19,24 +16,16 @@
     return wizardElement;
   };
 
-  var successHandler = function (wizards) {
+  window.renderWizards = function (wizards) {
+    var wizardsAmount = wizards.length > 4 ? 4 : wizards.length;
     var fragment = document.createDocumentFragment();
 
-    for (var i = 0; i < 4; i++) {
+    similarListElement.innerHTML = '';
+
+    for (var i = 0; i < wizardsAmount; i++) {
       fragment.appendChild(renderWizard(wizards[i]));
     }
 
     similarListElement.appendChild(fragment);
-  };
-
-  var errorHandler = function (errorMessage) {
-    var node = document.createElement('div');
-    node.classList.add('error-message');
-    node.textContent = errorMessage;
-    document.body.insertAdjacentElement('afterbegin', node);
-  };
-
-  window.renderWizards = function () {
-    backend.load(successHandler, errorHandler, loaderElement);
   };
 })();

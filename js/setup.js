@@ -4,8 +4,6 @@
   var backend = window.backend;
   var isEnterEvent = window.util.isEnterEvent;
   var isEscEvent = window.util.isEscEvent;
-  var renderWizards = window.renderWizards;
-  var changeColorWizard = window.changeColorWizard;
 
   var form = document.querySelector('.setup-wizard-form');
   var userDialog = document.querySelector('.setup');
@@ -14,7 +12,6 @@
   var userDialogOpenButton = document.querySelector('.setup-open');
   var userDialogCloseButton = userDialog.querySelector('.setup-close');
   var similarListElement = document.querySelector('.setup-similar-list');
-  var customWizard = userDialog.querySelector('.setup-player');
 
   var successHandler = function (response, evt) {
     userDialog.classList.add('hidden');
@@ -30,11 +27,8 @@
   };
 
   var openPopup = function () {
-    similarListElement.innerHTML = '';
-    renderWizards();
     userDialog.classList.remove('hidden');
     userDialogSimilar.classList.remove('hidden');
-    customWizard.addEventListener('click', changeColorWizard);
     document.addEventListener('keydown', popupEscPressHandler);
   };
 
@@ -42,7 +36,6 @@
     similarListElement.innerHTML = '';
     userDialog.classList.add('hidden');
     userDialogSimilar.classList.add('hidden');
-    customWizard.removeEventListener('click', changeColorWizard);
     document.removeEventListener('keydown', popupEscPressHandler);
   };
 

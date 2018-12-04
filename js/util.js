@@ -31,22 +31,6 @@
     return Math.floor(Math.random() * (max + 1 - min)) + min;
   };
 
-  var generateData = function (dataArray) {
-    return dataArray[getRandomNumber(0, dataArray.length - 1)];
-  };
-
-  var changeColor = function (element, colors, input) {
-    var newColor = window.util.generateData(colors);
-
-    if (element.tagName === 'DIV') {
-      element.style.backgroundColor = newColor;
-    } else {
-      element.style.fill = newColor;
-    }
-
-    input.value = newColor;
-  };
-
   var isEnterEvent = function (evt, action) {
     if (evt.which === KEYCODE.ENTER) {
       action();
@@ -62,8 +46,6 @@
   window.util = {
     statistic: STATISTIC_DATA,
     getRandomNumber: getRandomNumber,
-    generateData: generateData,
-    changeColor: changeColor,
     isEnterEvent: isEnterEvent,
     isEscEvent: isEscEvent
   };
