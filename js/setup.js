@@ -13,15 +13,6 @@
   var userDialogCloseButton = userDialog.querySelector('.setup-close');
   var similarListElement = document.querySelector('.setup-similar-list');
 
-  var successHandler = function (response, evt) {
-    userDialog.classList.add('hidden');
-    evt.preventDefault();
-  };
-
-  var errorHandler = function (errorMessage) {
-    throw new Error(errorMessage);
-  };
-
   var popupEscPressHandler = function (evt) {
     isEscEvent(evt, closePopup);
   };
@@ -37,6 +28,15 @@
     userDialog.classList.add('hidden');
     userDialogSimilar.classList.add('hidden');
     document.removeEventListener('keydown', popupEscPressHandler);
+  };
+
+  var successHandler = function (response, evt) {
+    userDialog.classList.add('hidden');
+    evt.preventDefault();
+  };
+
+  var errorHandler = function (errorMessage) {
+    throw new Error(errorMessage);
   };
 
   userDialogOpenButton.addEventListener('click', function () {
@@ -59,4 +59,3 @@
     backend.save(new FormData(form), successHandler, errorHandler);
   });
 })();
-

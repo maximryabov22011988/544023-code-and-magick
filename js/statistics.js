@@ -1,7 +1,30 @@
 'use strict';
 
 (function () {
-  var STATISTIC = window.util.statistic;
+  var STATISTIC = {
+    CLOUD: {
+      X: 100,
+      Y: 10,
+      WIDTH: 420,
+      HEIGHT: 270,
+      SHADOW_OFFSET: 10
+    },
+    FONT: {
+      SIZE: '16px',
+      FAMILY: 'PT Mono',
+      HEIGHT: 10,
+      GAP: 10
+    },
+    BAR: {
+      WIDTH: 40,
+      HEIGHT: 150,
+      GAP: 50
+    }
+  };
+
+  var getRandomNumber = function (min, max) {
+    return Math.floor(Math.random() * (max + 1 - min)) + min;
+  };
 
   var getMaxOfArray = function (timeArray) {
     return Math.max.apply(null, timeArray);
@@ -33,7 +56,7 @@
       ctx.fillText(names[i], xPoint, STATISTIC.CLOUD.HEIGHT - STATISTIC.FONT.GAP);
       ctx.fillText(Math.round(times[i]), xPoint, yPoint - barHeight - STATISTIC.FONT.GAP);
 
-      ctx.fillStyle = 'hsla(241, ' + window.util.getRandomNumber(0, 100) + '%, 30%, 1)';
+      ctx.fillStyle = 'hsla(241, ' + getRandomNumber(0, 100) + '%, 30%, 1)';
 
       if (names[i] === 'Вы') {
         ctx.fillStyle = 'rgba(255, 0, 0, 1)';
